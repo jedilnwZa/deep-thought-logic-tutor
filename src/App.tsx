@@ -13,6 +13,9 @@ import ControlPanel from './components/ControlPanel';
 import MessageBox from './components/MessageBox';
 import ChoiceModal from './components/ChoiceModal';
 import InfoPanel from './components/InfoPanel';
+import CustomPanel from './components/CustomPanel';
+import type { CustomSet } from './data/customSets';
+import { loadCustomSets, saveCustomSets } from './data/customSets';
 import './App.css';
 
 let uid = 0;
@@ -71,6 +74,12 @@ export default function App() {
   const [solved, setSolved] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [customSets, setCustomSets] = useState<CustomSet[]>(loadCustomSets);
+  const [customSetId, setCustomSetId] = useState<string | null>(null);
+  const [savedReturn, setSavedReturn] = useState<{ level: number; levelsCompleted: number; queue: Problem[] } | null>(
+    null
+  );
+  const [showCustomModal, setShowCustomModal] = useState(false);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -78,6 +87,7 @@ export default function App() {
   }, [theme]);
 
   const goalNode = nodes.find((n) => n.isGoal)!;
+  const activeSet = customSets.find((s) => s.id === customSetId) ?? null;
   const allVars = useMemo(() => {
     const s = new Set<string>();
     problem.premises.forEach((p) => collectVars(p, s));
@@ -252,7 +262,7 @@ export default function App() {
 
   function onSkip() {
     if (levelQueue.length <= 1) {
-      setMessage('No other problems in this level to skip to.');
+      setMessage('No other problems to skip to.');
       return;
     }
     const [first, ...rest] = levelQueue;
@@ -261,9 +271,40 @@ export default function App() {
     loadProblem(nq[0]);
   }
 
+  function startCustomSet(set: CustomSet) {
+    if (set.problems.length === 0) return;
+    if (!customSetId) setSavedReturn({ level, levelsCompleted, queue: levelQueue });
+    setCustomSetId(set.id);
+    setLevelQueue(set.problems);
+    loadProblem(set.problems[0]);
+    setShowCustomModal(false);
+    setMessage(`Playing custom set "${set.name}". Solve all ${set.problems.length} problems.`);
+  }
+
+  function exitCustomSet() {
+    const ret = savedReturn;
+    setCustomSetId(null);
+    setSavedReturn(null);
+    if (!ret) {
+      setMessage('Left custom set mode.');
+      return;
+    }
+    setLevel(ret.level);
+    setLevelsCompleted(ret.levelsCompleted);
+    setLevelQueue(ret.queue);
+    if (ret.queue.length > 0) {
+      loadProblem(ret.queue[0]);
+      setMessage(`Custom set complete! Back to level ${ret.level} of the standard problems.`);
+    }
+  }
+
   function advanceAfterSolve() {
     const rest = levelQueue.slice(1);
     if (rest.length === 0) {
+      if (customSetId) {
+        exitCustomSet();
+        return;
+      }
       const nextLevel = level + 1;
       setLevelsCompleted((c) => c + 1);
       if (nextLevel > LEVEL_COUNT) {
@@ -288,13 +329,32 @@ export default function App() {
       <header className="app-header">
         <h1>Deep Thought — Logic Proof Tutor</h1>
         <div className="app-header__stats">
-          <span>Current Level: {level}</span>
-          <span>Problems Remaining This Level: {levelQueue.length}</span>
-          <span>
-            Levels Completed: {levelsCompleted}/{LEVEL_COUNT}
-          </span>
-          <span>Problem Code: {problem.code}</span>
-          <span className="app-header__total">{totalProblems} problems loaded</span>
+          {customSetId && activeSet ? (
+            <>
+              <span>Custom Set: {activeSet.name}</span>
+              <span>Problems Remaining in Set: {levelQueue.length}</span>
+              <span>Problem Code: {problem.code}</span>
+              <span className="app-header__total">{activeSet.problems.length} problems in set</span>
+            </>
+          ) : (
+            <>
+              <span>Current Level: {level}</span>
+              <span>Problems Remaining This Level: {levelQueue.length}</span>
+              <span>
+                Levels Completed: {levelsCompleted}/{LEVEL_COUNT}
+              </span>
+              <span>Problem Code: {problem.code}</span>
+              <span className="app-header__total">{totalProblems} problems loaded</span>
+            </>
+          )}
+          <button className="header-btn" onClick={() => setShowCustomModal(true)}>
+            Custom Problems
+          </button>
+          {customSetId && (
+            <button className="header-btn header-btn--leave" onClick={exitCustomSet}>
+              Leave Set
+            </button>
+          )}
           <button
             className="theme-toggle"
             onClick={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
@@ -352,6 +412,25 @@ export default function App() {
           <span>Proof complete for {problem.code}!</span>
           <button onClick={advanceAfterSolve}>Next Problem →</button>
         </div>
+      )}
+
+      {showCustomModal && (
+        <CustomPanel
+          sets={customSets}
+          onClose={() => setShowCustomModal(false)}
+          onPlay={startCustomSet}
+          onDelete={(id) => {
+            const next = customSets.filter((s) => s.id !== id);
+            setCustomSets(next);
+            saveCustomSets(next);
+            if (customSetId === id) exitCustomSet();
+          }}
+          onSave={(set) => {
+            const next = [...customSets, set];
+            setCustomSets(next);
+            saveCustomSets(next);
+          }}
+        />
       )}
 
       {showInstructions && (
