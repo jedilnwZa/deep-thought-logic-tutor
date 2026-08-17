@@ -1,0 +1,21 @@
+:root {
+  font-family: 'Segoe UI', system-ui, Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg, #f6f7f9);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
