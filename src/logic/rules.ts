@@ -30,6 +30,7 @@ const MP: Rule = {
   id: 'MP',
   label: 'MP',
   sublabel: 'Modus Ponens',
+  description: 'From A → B and A, derive B.',
   min: 2,
   max: 2,
   apply: (sel) =>
@@ -44,6 +45,7 @@ const MT: Rule = {
   id: 'MT',
   label: 'MT',
   sublabel: 'Modus Tollens',
+  description: 'From A → B and ¬B, derive ¬A.',
   min: 2,
   max: 2,
   apply: (sel) =>
@@ -58,6 +60,7 @@ const DS: Rule = {
   id: 'DS',
   label: 'DS',
   sublabel: 'Disjunctive Syllogism',
+  description: 'From A ∨ B and ¬A, derive B (or from A ∨ B and ¬B, derive A).',
   min: 2,
   max: 2,
   apply: (sel) => {
@@ -80,6 +83,7 @@ const Add: Rule = {
   id: 'Add',
   label: 'Add',
   sublabel: 'Addition',
+  description: 'From A, derive A ∨ B for any expression B.',
   min: 1,
   max: 1,
   apply: (sel, allVars) => {
@@ -99,6 +103,7 @@ const Simp: Rule = {
   id: 'Simp',
   label: 'Simp',
   sublabel: 'Simplification',
+  description: 'From A ∧ B, derive A alone, or B alone.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -115,6 +120,7 @@ const Conj: Rule = {
   id: 'Conj',
   label: 'Conj',
   sublabel: 'Conjunction',
+  description: 'From A and B, derive A ∧ B.',
   min: 2,
   max: 2,
   apply: (sel) => {
@@ -131,6 +137,7 @@ const HS: Rule = {
   id: 'HS',
   label: 'HS',
   sublabel: 'Hypothetical Syllogism',
+  description: 'From A → B and B → C, derive A → C.',
   min: 2,
   max: 2,
   apply: (sel) =>
@@ -145,6 +152,7 @@ const CD: Rule = {
   id: 'CD',
   label: 'CD',
   sublabel: 'Constructive Dilemma',
+  description: 'From A → B, C → D, and A ∨ C, derive B ∨ D.',
   min: 3,
   max: 3,
   apply: (sel) => {
@@ -179,6 +187,7 @@ const DN: Rule = {
   id: 'DN',
   label: 'DN',
   sublabel: 'Double Negation',
+  description: 'From ¬¬A, derive A; or from A, derive ¬¬A.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -194,6 +203,7 @@ const DeM: Rule = {
   id: 'DeM',
   label: 'DeM',
   sublabel: "DeMorgan's",
+  description: 'Move a negation inside: ¬(A ∧ B) ↔ ¬A ∨ ¬B and ¬(A ∨ B) ↔ ¬A ∧ ¬B.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -213,6 +223,7 @@ const Impl: Rule = {
   id: 'Impl',
   label: 'Impl',
   sublabel: 'Implication',
+  description: 'Replace A → B with ¬A ∨ B (or ¬A ∨ B with A → B).',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -228,6 +239,7 @@ const Contra: Rule = {
   id: 'Contra',
   label: 'Contra',
   sublabel: 'Contrapositive',
+  description: 'From A → B, derive ¬B → ¬A.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -241,6 +253,7 @@ const Equiv: Rule = {
   id: 'Equiv',
   label: 'Equiv',
   sublabel: 'Equivalence',
+  description: 'Replace A ↔ B with (A → B) ∧ (B → A), or with (A ∧ B) ∨ (¬A ∧ ¬B).',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -278,6 +291,7 @@ const Contradiction: Rule = {
   id: 'Contra2',
   label: '⊥',
   sublabel: 'Contradiction',
+  description: 'From A and ¬A, derive ⊥ (a contradiction).',
   min: 2,
   max: 2,
   apply: (sel) =>
@@ -288,6 +302,7 @@ const Comm: Rule = {
   id: 'Comm',
   label: 'Comm',
   sublabel: 'Communative',
+  description: 'Swap the operands: A ∧ B → B ∧ A, A ∨ B → B ∨ A, or A ↔ B → B ↔ A.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -303,6 +318,7 @@ const Assoc: Rule = {
   id: 'Assoc',
   label: 'Assoc',
   sublabel: 'Associative',
+  description: 'Regroup nested conjunctions or disjunctions, e.g. (A ∧ B) ∧ C ↔ A ∧ (B ∧ C).',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -324,6 +340,7 @@ const Dist: Rule = {
   id: 'Dist',
   label: 'Dist',
   sublabel: 'Distributive',
+  description: 'Distribute ∧ over ∨ (or ∨ over ∧), e.g. A ∧ (B ∨ C) ↔ (A ∧ B) ∨ (A ∧ C).',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -357,6 +374,7 @@ const Abs: Rule = {
   id: 'Abs',
   label: 'Abs',
   sublabel: 'Absorption',
+  description: 'Simplify A ∧ (A ∨ B) to A, or A ∨ (A ∧ B) to A.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -378,6 +396,7 @@ const Exp: Rule = {
   id: 'Exp',
   label: 'Exp',
   sublabel: 'Exportation',
+  description: 'Replace (A ∧ B) → C with A → (B → C).',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -395,6 +414,7 @@ const Taut: Rule = {
   id: 'Taut',
   label: 'Taut',
   sublabel: 'Tautology',
+  description: 'Replace A ∨ A with A or A ∧ A with A; or expand A into A ∨ A / A ∧ A.',
   min: 1,
   max: 1,
   apply: (sel) => {

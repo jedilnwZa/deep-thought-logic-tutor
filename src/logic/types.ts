@@ -18,6 +18,7 @@ export interface Rule {
   id: string;
   label: string;
   sublabel: string;
+  description: string;
   min: number;
   max: number;
   apply: (selected: Expr[], allVars: string[]) => RuleResult[];
