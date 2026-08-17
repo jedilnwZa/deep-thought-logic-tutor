@@ -13,18 +13,39 @@ import ControlPanel from './components/ControlPanel';
 import MessageBox from './components/MessageBox';
 import ChoiceModal from './components/ChoiceModal';
 import InfoPanel from './components/InfoPanel';
+import CreateProblemModal from './components/CreateProblemModal';
 import './App.css';
 
-let uid = 0;
-const nextId = () => `n${uid++}`;
+declare global {
+  interface Window {
+    __deepThoughtUid?: number;
+  }
+}
+
+function nextId(): string {
+  window.__deepThoughtUid = (window.__deepThoughtUid ?? 0) + 1;
+  return `n${window.__deepThoughtUid}`;
+}
 
 type Theme = 'light' | 'dark';
 const THEME_KEY = 'deep-thought-theme';
+const CUSTOM_PROBLEMS_KEY = 'deep-thought-custom-problems';
 
 function getInitialTheme(): Theme {
   const stored = localStorage.getItem(THEME_KEY);
   if (stored === 'light' || stored === 'dark') return stored;
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function loadCustomProblems(): Problem[] {
+  try {
+    const raw = localStorage.getItem(CUSTOM_PROBLEMS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as Problem[]) : [];
+  } catch {
+    return [];
+  }
 }
 
 function buildNodesFromProblem(problem: Problem): { nodes: ProofNode[]; nextLine: number } {
@@ -71,6 +92,8 @@ export default function App() {
   const [solved, setSolved] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [customProblems, setCustomProblems] = useState<Problem[]>(loadCustomProblems);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -281,6 +304,37 @@ export default function App() {
     }
   }
 
+  function onCreateProblem(p: Problem) {
+    setCustomProblems((prev) => {
+      const next = [p, ...prev];
+      localStorage.setItem(CUSTOM_PROBLEMS_KEY, JSON.stringify(next));
+      return next;
+    });
+    setShowCreateModal(false);
+    loadProblem(p);
+  }
+
+  function onLoadCustomProblem(p: Problem) {
+    setShowCreateModal(false);
+    loadProblem(p);
+  }
+
+  function onDeleteCustomProblem(id: string) {
+    setCustomProblems((prev) => {
+      const next = prev.filter((p) => p.id !== id);
+      localStorage.setItem(CUSTOM_PROBLEMS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }
+
+  function onBackToLevels() {
+    if (levelQueue.length === 0) {
+      setMessage('No level problems left — try creating another problem instead.');
+      return;
+    }
+    loadProblem(levelQueue[0]);
+  }
+
   const totalProblems = PROBLEMS.length;
 
   return (
@@ -323,6 +377,7 @@ export default function App() {
             onIndirect={onIndirect}
             onRestart={onRestart}
             onSkip={onSkip}
+            onNewProblem={() => setShowCreateModal(true)}
             indirectDisabled={isIndirect || solved}
           />
         </section>
@@ -350,8 +405,28 @@ export default function App() {
       {solved && !pendingChoice && (
         <div className="win-banner">
           <span>Proof complete for {problem.code}!</span>
-          <button onClick={advanceAfterSolve}>Next Problem →</button>
+          {problem.custom ? (
+            <>
+              <button onClick={() => setShowCreateModal(true)}>New Problem</button>
+              <button className="win-banner__secondary" onClick={onBackToLevels}>
+                Back to Levels
+              </button>
+            </>
+          ) : (
+            <button onClick={advanceAfterSolve}>Next Problem →</button>
+          )}
         </div>
+      )}
+
+      {showCreateModal && (
+        <CreateProblemModal
+          reprMode={reprMode}
+          savedProblems={customProblems}
+          onCreate={onCreateProblem}
+          onLoad={onLoadCustomProblem}
+          onDelete={onDeleteCustomProblem}
+          onClose={() => setShowCreateModal(false)}
+        />
       )}
 
       {showInstructions && (
@@ -365,7 +440,8 @@ export default function App() {
               layout. Use <strong>Get Hint</strong> if you're stuck, <strong>Delete Node</strong> to remove an
               unused derived line, <strong>Change to Indirect Proof</strong> to assume the negation of the goal and
               aim for a contradiction (⊥), and <strong>Skip</strong> / <strong>Restart</strong> to manage the
-              current problem. Reach the goal expression (shown at row "C") to complete the proof.
+              current problem. Reach the goal expression (shown at row "C") to complete the proof. Use{' '}
+              <strong>+ New Problem</strong> to write your own premises and goal in plain text or symbols.
             </p>
             <button className="modal__cancel" onClick={() => setShowInstructions(false)}>
               Close

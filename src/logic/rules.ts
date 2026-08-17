@@ -30,6 +30,8 @@ const MP: Rule = {
   id: 'MP',
   label: 'MP',
   sublabel: 'Modus Ponens',
+  formula: 'P → Q, P ⊢ Q',
+  explanation: 'If P implies Q, and P is true, then Q must be true. Select an implication and its antecedent.',
   min: 2,
   max: 2,
   apply: (sel) =>
@@ -44,6 +46,8 @@ const MT: Rule = {
   id: 'MT',
   label: 'MT',
   sublabel: 'Modus Tollens',
+  formula: 'P → Q, ¬Q ⊢ ¬P',
+  explanation: 'If P implies Q, and Q is false, then P must be false too. Select an implication and the negation of its consequent.',
   min: 2,
   max: 2,
   apply: (sel) =>
@@ -58,6 +62,8 @@ const DS: Rule = {
   id: 'DS',
   label: 'DS',
   sublabel: 'Disjunctive Syllogism',
+  formula: 'P ∨ Q, ¬P ⊢ Q',
+  explanation: 'If at least one of P or Q is true, and P is ruled out, then Q must be true. Select a disjunction and the negation of one side.',
   min: 2,
   max: 2,
   apply: (sel) => {
@@ -80,6 +86,8 @@ const Add: Rule = {
   id: 'Add',
   label: 'Add',
   sublabel: 'Addition',
+  formula: 'P ⊢ P ∨ Q',
+  explanation: 'If P is true, then "P or anything" is also true. Select one node, then choose what to disjoin it with.',
   min: 1,
   max: 1,
   apply: (sel, allVars) => {
@@ -99,6 +107,8 @@ const Simp: Rule = {
   id: 'Simp',
   label: 'Simp',
   sublabel: 'Simplification',
+  formula: 'P ∧ Q ⊢ P (or Q)',
+  explanation: 'If a conjunction is true, each of its parts is true on its own. Select a conjunction to extract either side.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -115,6 +125,8 @@ const Conj: Rule = {
   id: 'Conj',
   label: 'Conj',
   sublabel: 'Conjunction',
+  formula: 'P, Q ⊢ P ∧ Q',
+  explanation: 'If P is true and Q is true, then "P and Q" is true. Select any two nodes to combine them.',
   min: 2,
   max: 2,
   apply: (sel) => {
@@ -131,6 +143,8 @@ const HS: Rule = {
   id: 'HS',
   label: 'HS',
   sublabel: 'Hypothetical Syllogism',
+  formula: 'P → Q, Q → R ⊢ P → R',
+  explanation: 'Chain two implications together when the consequent of one matches the antecedent of the other.',
   min: 2,
   max: 2,
   apply: (sel) =>
@@ -145,6 +159,8 @@ const CD: Rule = {
   id: 'CD',
   label: 'CD',
   sublabel: 'Constructive Dilemma',
+  formula: 'P → Q, R → S, P ∨ R ⊢ Q ∨ S',
+  explanation: 'Given two implications and a disjunction of their antecedents, conclude a disjunction of their consequents. Select all three nodes.',
   min: 3,
   max: 3,
   apply: (sel) => {
@@ -179,6 +195,8 @@ const DN: Rule = {
   id: 'DN',
   label: 'DN',
   sublabel: 'Double Negation',
+  formula: 'P ≡ ¬¬P',
+  explanation: 'A statement is equivalent to the negation of its negation. Works in either direction.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -194,6 +212,8 @@ const DeM: Rule = {
   id: 'DeM',
   label: 'DeM',
   sublabel: "DeMorgan's",
+  formula: '¬(P ∨ Q) ≡ ¬P ∧ ¬Q,  ¬(P ∧ Q) ≡ ¬P ∨ ¬Q',
+  explanation: 'Push a negation through an "and"/"or", flipping it to the other connective and negating each side.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -213,6 +233,8 @@ const Impl: Rule = {
   id: 'Impl',
   label: 'Impl',
   sublabel: 'Implication',
+  formula: 'P → Q ≡ ¬P ∨ Q',
+  explanation: 'An implication can be rewritten as a disjunction of the negated antecedent and the consequent, or back again.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -228,6 +250,8 @@ const Contra: Rule = {
   id: 'Contra',
   label: 'Contra',
   sublabel: 'Contrapositive',
+  formula: 'P → Q ≡ ¬Q → ¬P',
+  explanation: 'An implication is equivalent to the negated consequent implying the negated antecedent.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -241,6 +265,8 @@ const Equiv: Rule = {
   id: 'Equiv',
   label: 'Equiv',
   sublabel: 'Equivalence',
+  formula: 'P ↔ Q ≡ (P→Q) ∧ (Q→P) ≡ (P∧Q) ∨ (¬P∧¬Q)',
+  explanation: 'A biconditional can be split into two implications, or into "both true / both false", or built back up.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -278,6 +304,8 @@ const Contradiction: Rule = {
   id: 'Contra2',
   label: '⊥',
   sublabel: 'Contradiction',
+  formula: 'P, ¬P ⊢ ⊥',
+  explanation: 'A statement and its negation can never both be true. Select a node and its negation to derive a contradiction — useful for Indirect Proof.',
   min: 2,
   max: 2,
   apply: (sel) =>
@@ -288,6 +316,8 @@ const Comm: Rule = {
   id: 'Comm',
   label: 'Comm',
   sublabel: 'Communative',
+  formula: 'P ∧ Q ≡ Q ∧ P,  P ∨ Q ≡ Q ∨ P',
+  explanation: 'The order of the two sides of an "and", "or", or "iff" can be swapped freely.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -303,6 +333,8 @@ const Assoc: Rule = {
   id: 'Assoc',
   label: 'Assoc',
   sublabel: 'Associative',
+  formula: '(P∧Q)∧R ≡ P∧(Q∧R),  (P∨Q)∨R ≡ P∨(Q∨R)',
+  explanation: 'When three terms are chained with the same connective, the grouping of parentheses can be shifted.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -324,6 +356,8 @@ const Dist: Rule = {
   id: 'Dist',
   label: 'Dist',
   sublabel: 'Distributive',
+  formula: 'P∧(Q∨R) ≡ (P∧Q)∨(P∧R),  P∨(Q∧R) ≡ (P∨Q)∧(P∨R)',
+  explanation: 'Distribute one connective over another (like multiplying over addition), or factor a common term back out.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -357,6 +391,8 @@ const Abs: Rule = {
   id: 'Abs',
   label: 'Abs',
   sublabel: 'Absorption',
+  formula: 'P∧(P∨Q) ≡ P,  P∨(P∧Q) ≡ P',
+  explanation: 'When one term already implies the whole other clause, the clause collapses away, leaving just the term.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -378,6 +414,8 @@ const Exp: Rule = {
   id: 'Exp',
   label: 'Exp',
   sublabel: 'Exportation',
+  formula: '(P∧Q) → R ≡ P → (Q→R)',
+  explanation: 'A conjunction in the antecedent can be "exported" into a chain of nested implications, or re-imported.',
   min: 1,
   max: 1,
   apply: (sel) => {
@@ -395,6 +433,8 @@ const Taut: Rule = {
   id: 'Taut',
   label: 'Taut',
   sublabel: 'Tautology',
+  formula: 'P ≡ P ∨ P ≡ P ∧ P',
+  explanation: 'A statement is equivalent to itself "or-ed" or "and-ed" with itself, in either direction.',
   min: 1,
   max: 1,
   apply: (sel) => {

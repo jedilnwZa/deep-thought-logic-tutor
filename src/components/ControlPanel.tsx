@@ -4,10 +4,19 @@ interface Props {
   onIndirect: () => void;
   onRestart: () => void;
   onSkip: () => void;
+  onNewProblem: () => void;
   indirectDisabled: boolean;
 }
 
-export default function ControlPanel({ onDelete, onHint, onIndirect, onRestart, onSkip, indirectDisabled }: Props) {
+export default function ControlPanel({
+  onDelete,
+  onHint,
+  onIndirect,
+  onRestart,
+  onSkip,
+  onNewProblem,
+  indirectDisabled,
+}: Props) {
   return (
     <div className="control-panel">
       <button className="ctrl-btn ctrl-btn--delete" onClick={onDelete}>
@@ -24,6 +33,9 @@ export default function ControlPanel({ onDelete, onHint, onIndirect, onRestart, 
       </button>
       <button className="ctrl-btn" onClick={onSkip}>
         Skip Current Problem
+      </button>
+      <button className="ctrl-btn ctrl-btn--new" onClick={onNewProblem}>
+        + New Problem
       </button>
     </div>
   );

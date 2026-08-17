@@ -273,6 +273,16 @@
   background: var(--hint-hover);
 }
 
+.ctrl-btn--new {
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.ctrl-btn--new:hover {
+  background: var(--accent-soft);
+}
+
 /* ---------- Rules panel ---------- */
 
 .panel--rules {
@@ -301,6 +311,7 @@
 }
 
 .rule-btn {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -333,6 +344,83 @@
 .rule-btn__sub {
   font-size: 10.5px;
   color: var(--text-faint);
+}
+
+.rule-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  width: 240px;
+  max-width: 60vw;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: var(--shadow-modal);
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  z-index: 30;
+}
+
+.rule-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--panel);
+}
+
+.rule-btn:hover .rule-tooltip,
+.rule-btn:focus-visible .rule-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.rule-tooltip__title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.rule-tooltip__formula {
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--accent);
+}
+
+.rule-tooltip__text {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.rules-row:first-child .rule-tooltip {
+  bottom: auto;
+  top: calc(100% + 8px);
+  transform: translateX(-50%) translateY(-4px);
+}
+
+.rules-row:first-child .rule-btn:hover .rule-tooltip,
+.rules-row:first-child .rule-btn:focus-visible .rule-tooltip {
+  transform: translateX(-50%) translateY(0);
+}
+
+.rules-row:first-child .rule-tooltip::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--panel);
 }
 
 /* ---------- Right panel: table + info ---------- */
@@ -519,6 +607,222 @@
   font-weight: 600;
 }
 
+.modal--wide {
+  width: min(620px, 92vw);
+}
+
+.modal__hint code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 11.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--accent);
+}
+
+.modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal__primary {
+  padding: 8px 16px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modal__primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.modal__primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- Create Problem form ---------- */
+
+.problem-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.problem-form__label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  margin-top: 4px;
+}
+
+.problem-form__label--goal {
+  margin-top: 10px;
+}
+
+.problem-form__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.problem-form__field {
+  flex: 1;
+  min-width: 0;
+}
+
+.problem-form__input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.problem-form__input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.problem-form__input--error {
+  border-color: var(--red);
+}
+
+.problem-form__error {
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 3px;
+}
+
+.problem-form__preview {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.problem-form__remove {
+  flex: none;
+  width: 30px;
+  height: 34px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text-faint);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.problem-form__remove:hover:not(:disabled) {
+  background: var(--hover-bg);
+  color: var(--red);
+}
+
+.problem-form__remove:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.problem-form__add {
+  align-self: flex-start;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.problem-form__add:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- Saved custom problems ---------- */
+
+.saved-problems {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.saved-problems h4 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+
+.saved-problems__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 160px;
+  overflow: auto;
+}
+
+.saved-problems__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+}
+
+.saved-problems__goal {
+  font-size: 12.5px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-problems__actions {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+
+.saved-problems__actions button {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 5px;
+  padding: 4px 9px;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.saved-problems__actions button:hover {
+  background: var(--hover-bg);
+}
+
+.saved-problems__delete:hover {
+  color: var(--red);
+  border-color: var(--red);
+}
+
 .modal__hint {
   font-size: 13px;
   color: var(--text-muted);
@@ -593,6 +897,11 @@
   font-weight: 600;
   font-size: 12.5px;
   cursor: pointer;
+}
+
+.win-banner button.win-banner__secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 @media (max-width: 1100px) {

@@ -30,9 +30,14 @@ export default function RulesPanel({ onApply }: Props) {
 
 function RuleButton({ rule, onApply }: { rule: Rule; onApply: (r: Rule) => void }) {
   return (
-    <button className="rule-btn" onClick={() => onApply(rule)} title={rule.sublabel}>
+    <button className="rule-btn" onClick={() => onApply(rule)} aria-label={`${rule.sublabel}: ${rule.explanation}`}>
       <span className="rule-btn__label">{rule.label}</span>
       <span className="rule-btn__sub">{rule.sublabel}</span>
+      <span className="rule-tooltip" role="tooltip">
+        <span className="rule-tooltip__title">{rule.sublabel}</span>
+        <span className="rule-tooltip__formula">{rule.formula}</span>
+        <span className="rule-tooltip__text">{rule.explanation}</span>
+      </span>
     </button>
   );
 }

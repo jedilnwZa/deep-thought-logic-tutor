@@ -18,6 +18,8 @@ export interface Rule {
   id: string;
   label: string;
   sublabel: string;
+  formula: string;
+  explanation: string;
   min: number;
   max: number;
   apply: (selected: Expr[], allVars: string[]) => RuleResult[];
@@ -41,4 +43,5 @@ export interface Problem {
   code: string;
   premises: Expr[];
   goal: Expr;
+  custom?: boolean;
 }
